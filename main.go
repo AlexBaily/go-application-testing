@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"go-application-testing/internal/logging"
 	"go-application-testing/internal/telemetry"
 	"log/slog"
 	"net/http"
 
+	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 )
@@ -31,8 +33,12 @@ func main() {
 	mux.HandleFunc("GET /test", handleTest)
 	mux.HandleFunc("GET /health", handleHealth)
 
+	handler := otelhttp.NewHandler(
+		logging.HttpLogger(mux),
+		"go-app",
+	)
 	slog.Info("Server listening on :8080")
-	if err := http.ListenAndServe(":8080", mux); err != nil {
+	if err := http.ListenAndServe(":8080", handler); err != nil {
 		slog.Error("Server failed", "error", err)
 	}
 
