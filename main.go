@@ -21,7 +21,11 @@ func main() {
 	if err != nil {
 		slog.ErrorContext(ctx, "Failed to create tracer", "error", err)
 	}
-	defer tracerProvider.Shutdown(ctx)
+	defer func() {
+		if err := tracerProvider.Shutdown(ctx); err != nil {
+			slog.Error("Failed to shutdown tracer", "error", err)
+		}
+	}()
 
 	ctx, span := otel.Tracer("app-testing").Start(ctx, "app-testing")
 	defer span.End()
@@ -47,10 +51,14 @@ func handleTest(w http.ResponseWriter, r *http.Request) {
 	)
 	span.SetAttributes(attribute.Int("http.status_code", 200))
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(`{"status":"ok"}`))
+	if _, err := w.Write([]byte(`{"status":"ok"}`)); err != nil {
+		slog.Error("Failed to write response", "error", err)
+	}
 }
 
 func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("OK"))
+	if _, err := w.Write([]byte("OK")); err != nil {
+		slog.Error("Failed to write response", "error", err)
+	}
 }
