@@ -10,3 +10,13 @@ Goals:
  - Security
  - E2E testing
  - CI/CD
+
+
+Observability 
+
+The observability stack currently uses the following tools: 
+
+- VictoriaMetrics (Metrics collection)
+- Grafana (Visualisation)
+- Grafana Tempo (Tracing)
+- Loki (Logging)
