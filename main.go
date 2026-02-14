@@ -27,9 +27,6 @@ func main() {
 		}
 	}()
 
-	ctx, span := otel.Tracer("app-testing").Start(ctx, "app-testing")
-	defer span.End()
-
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /test", handleTest)
 	mux.HandleFunc("GET /health", handleHealth)
