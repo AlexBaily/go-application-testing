@@ -1,4 +1,4 @@
-.PHONY: test lint fmt check build image-build
+.PHONY: test lint fmt check run build image-build
 
 IMAGE_NAME ?= go-application-testing
 IMAGE_TAG ?= latest
@@ -17,9 +17,13 @@ test:
 
 check: fmt lint test
 
+run:
+	@echo "Running main..."
+	go run cmd/server/main.go
+
 build:
 	@echo "Running go build..."
-	go build -o bin/go-application-testing .
+	go build -o bin/go-application-testing ./cmd/server/main.go
 
 image-build:
 	@echo "Running go build..."
