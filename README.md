@@ -20,3 +20,4 @@ The observability stack currently uses the following tools:
 - Grafana (Visualisation)
 - Grafana Tempo (Tracing)
 - Loki (Logging)
+- Profiling (Pyroscope)

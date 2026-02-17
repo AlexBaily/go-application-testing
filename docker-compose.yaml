@@ -55,6 +55,7 @@ services:
       - GF_SECURITY_ADMIN_PASSWORD=admin
       - GF_USERS_ALLOW_SIGN_UP=false
       - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_PLUGINS_PREINSTALL_SYNC=grafana-pyroscope-app
     volumes:
       - grafana-data:/var/lib/grafana
       - ./local/grafana/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:ro
@@ -92,6 +93,18 @@ services:
       - application
     depends_on:
       - loki
+
+  pyroscope:
+    image: grafana/pyroscope:latest
+    container_name: pyroscope
+    ports:
+      - "4040:4040"
+    volumes:
+      - pyroscope-data:/data
+    restart: unless-stopped
+    networks:
+      - application
+
 networks:
   application:
     driver: bridge
@@ -101,3 +114,4 @@ volumes:
   tempo-data:
   grafana-data:
   loki-data:
+  pyroscope-data:
