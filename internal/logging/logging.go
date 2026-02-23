@@ -8,14 +8,12 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-func HttpLogger(next http.Handler) http.Handler {
+func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
 		span := trace.SpanFromContext(r.Context())
 		traceID := span.SpanContext().TraceID().String()
-
-		next.ServeHTTP(w, r)
 
 		slog.Info("Request completed",
 			"method", r.Method,
@@ -25,4 +23,5 @@ func HttpLogger(next http.Handler) http.Handler {
 			"trace_id", traceID,
 		)
 	})
+
 }

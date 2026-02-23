@@ -16,6 +16,11 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	if err := telemetry.InitProfiler("go-app", "http://pyroscope:4040"); err != nil {
+		slog.Warn("Failed to initialize profiler", "error", err)
+		// Don't fail - profiling is optional
+	}
+
 	tracerProvider, err := telemetry.InitTracer("tempo", ctx)
 	if err != nil {
 		slog.ErrorContext(ctx, "Failed to create tracer", "error", err)
@@ -31,7 +36,7 @@ func main() {
 	mux.HandleFunc("GET /health", handlers.HandleHealth)
 
 	handler := otelhttp.NewHandler(
-		logging.HttpLogger(mux),
+		logging.LoggingMiddleware(mux),
 		"go-app",
 	)
 	slog.Info("Server listening on :8080")
