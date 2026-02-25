@@ -1,4 +1,4 @@
-.PHONY: test lint fmt check run build image-build docker-up docker-down
+.PHONY: test lint fmt check run build image-build docker-up docker-down sqlc-generate
 
 IMAGE_NAME ?= go-application-testing
 IMAGE_TAG ?= latest
@@ -34,3 +34,7 @@ docker-up:
 
 docker-down:
 	docker-compose down
+
+sqlc-generate:
+	@echo "Generating sqlc code..."
+	sqlc generate
